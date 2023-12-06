@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Show users</title>
+</head>
+<body>
+
+<div>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Age</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Operations</th>
+        </tr>
+        <tr th:each ="user : ${users}">
+            <td th:utext="${user.getId()}">...</td>
+            <td th:utext="${user.getAge()}">...</td>
+            <td th:utext="${user.getName()}">...</td>
+            <td th:utext="${user.getEmail()}">...</td>
+            <td>
+                    <p th:each="role: ${user.getRoles()}" th:text="${role.getName().replace('ROLE_', '')}"></p>
+            </td>
+            <td>
+                <a th:href="@{/admin/update(id=${user.getId()})}">Update</a>
+                <br />
+                <a th:href="@{/admin/delete(id=${user.getId()})}">Delete</a>
+            </td>
+
+        </tr>
+    </table>
+</div>
+
+<br/>
+<hr/>
+
+
+<a class="action-button" th:href="@{/admin/new}">Create new person</a>
+<br />
+<br />
+<a class="action-button" th:href="@{/user}">My page</a>
+<br />
+<br />
+<a class="action-button" th:href="@{/logout}">Logout</a>
+
+</body>
+</html>
