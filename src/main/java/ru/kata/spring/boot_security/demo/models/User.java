@@ -1,8 +1,5 @@
 package ru.kata.spring.boot_security.demo.models;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -54,6 +51,12 @@ public class User implements UserDetails {
 
     }
 
+    public User(int age, String name, String email, String password) {
+        this.age = age;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

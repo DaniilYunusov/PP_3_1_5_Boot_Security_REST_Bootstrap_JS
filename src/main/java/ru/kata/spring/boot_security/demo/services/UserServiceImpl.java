@@ -12,9 +12,9 @@ import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Service
@@ -22,7 +22,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, @Lazy PasswordEncoder passwordEncoder) {
@@ -64,6 +64,13 @@ public class UserServiceImpl implements UserService {
     public void save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(roleRepository.findByName("ROLE_USER"));
+        userRepository.save(user);
+    }
+
+    @Override
+    public void save(User user, Set<Role> accessRights) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        accessRights.forEach(role -> user.setRole(roleRepository.findByName(role.getName())));
         userRepository.save(user);
     }
 

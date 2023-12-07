@@ -12,13 +12,11 @@ import java.security.Principal;
 
 @Controller
 public class UserController {
-    private UserService userService;
-    private CreateUserValidator userValidator;
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService, CreateUserValidator userValidator) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.userValidator = userValidator;
     }
 
 

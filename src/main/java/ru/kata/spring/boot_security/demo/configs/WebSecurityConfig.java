@@ -11,35 +11,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
 @EnableWebSecurity
-public class WebSecurityConfig
-//        extends WebSecurityConfigurerAdapter
-{
+public class WebSecurityConfig {
     private final SuccessUserHandler successUserHandler;
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public WebSecurityConfig(SuccessUserHandler successUserHandler, UserService userService) {
         this.successUserHandler = successUserHandler;
         this.userService = userService;
     }
-
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http
-//                    .authorizeRequests()
-//                    .antMatchers("/admin/**").hasAnyRole("ADMIN", "USER") //исправить на hasRole("ADMIN")
-//                    .antMatchers("/user").hasAnyRole("ADMIN", "USER")
-//                    .antMatchers("/homePage").permitAll()
-//                    .anyRequest().authenticated()
-//                .and()
-//                    .formLogin().successHandler(successUserHandler)
-//                    .permitAll()
-//                .and()
-//                    .logout()
-//                    .logoutUrl("/logout")
-//                    .logoutSuccessUrl("/homePage")
-//                    .permitAll();
-//    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
