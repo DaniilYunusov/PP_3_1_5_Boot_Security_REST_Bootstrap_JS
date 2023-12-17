@@ -41,13 +41,14 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+    @ManyToMany
     @Fetch(FetchMode.JOIN)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
+    @NotEmpty(message = "Роли не выбраны")
     private Set<Role> roles = new HashSet<>();
 
     public User(){
@@ -59,6 +60,14 @@ public class User implements UserDetails {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+
+    public User(int age, String name, String email, String password, Set<Role> roles) {
+        this.age = age;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
     }
 
     @Override
@@ -154,6 +163,10 @@ public class User implements UserDetails {
                 ", password='" + password + '\'' +
                 ", roles=" + roles +
                 '}';
+    }
+
+    public String getShortRole() {
+        return roles.toString().substring(1, roles.toString().length() - 1).replace("ROLE_", "");
     }
 
     @Override

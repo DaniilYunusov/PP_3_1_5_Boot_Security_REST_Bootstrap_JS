@@ -14,4 +14,5 @@ public interface UserService extends UserDetailsService {
     void save(User user);
     public void save(User user, Set<Role> accessRights);
     void delete(long id);
+    User findByID(long id);
 }

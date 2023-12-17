@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
+
 @EnableWebSecurity
 public class WebSecurityConfig {
     private final SuccessUserHandler successUserHandler;
@@ -24,10 +25,11 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                     .authorizeRequests()
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .antMatchers("/user").hasAnyRole("ADMIN", "USER")
-                    .antMatchers("/homePage").permitAll()
+                    .antMatchers("/homePage/**").permitAll()
                     .anyRequest().authenticated()
                 .and()
                     .formLogin()

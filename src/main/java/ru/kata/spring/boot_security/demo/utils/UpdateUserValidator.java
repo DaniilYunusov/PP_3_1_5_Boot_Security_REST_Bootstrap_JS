@@ -20,7 +20,6 @@ public class UpdateUserValidator extends UserValidator {
     @Override
     public void validate(Object o, Errors errors) {
         User user = (User) o;
-
         if(userRepository.findByNameAndIdNot(user.getName(), user.getId()) != null) {
             errors.rejectValue("name", "", "This name is already taken!");
         }

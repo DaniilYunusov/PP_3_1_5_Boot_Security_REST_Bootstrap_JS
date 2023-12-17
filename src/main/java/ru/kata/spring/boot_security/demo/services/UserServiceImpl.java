@@ -11,10 +11,12 @@ import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
+import ru.kata.spring.boot_security.demo.utils.UserNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -64,7 +66,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(roleRepository.findByName("ROLE_USER"));
+        if (!user.getRoles().stream().map(Role::getName).collect(Collectors.toList()).contains("ROLE_USER")) {
+            user.setRole(roleRepository.findByName("ROLE_USER"));
+        }
         userRepository.save(user);
     }
 
@@ -79,6 +83,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void delete(long id) {
-        userRepository.deleteById(id);
+        if (userRepository.findById(id).isPresent()) {
+            userRepository.deleteById(id);
+        } else {
+            throw new UserNotFoundException();
+        }
+    }
+
+    @Override
+    public User findByID(long id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.orElseThrow(UserNotFoundException::new);
     }
 }
