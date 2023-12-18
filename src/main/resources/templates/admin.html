@@ -1,43 +1,55 @@
 <!DOCTYPE html>
-<html lang="en" , xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <title>Show users</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta charset="UTF-8">
-    <title>Admin panel</title>
 </head>
 <body>
 
 <header>
-    <nav class="navbar navbar-dark bg-dark d-flex justify-content-between">
-    <span>
-    <span class="navbar-brand font-weight-bold" id="headerUsername"></span>
-    <span class="navbar-brand"
-          th:text="'with roles: '" id="headerRole"></span>
-    </span>
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="/logout">Logout</a>
-            </li>
-        </ul>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">
+                <span class="font-weight-bold" th:text="${currentUser.getName()}"></span>
+                <span class="font-weight-normal">with roles: </span>
+                <span class="font-weight-normal" th:each="role : ${currentUser.getRoles()}"
+                      th:text="${role.name.replace('ROLE_', '') + ' '}"></span>
+            </span>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
+            </ul>
+        </div>
     </nav>
 </header>
 
-<div class="container-fluid h-100">
+<div class="container-fluid" style="height: 100vh">
     <div class="row h-100">
-        <div class="p-0 col-2">
-            <div class="nav flex-column nav-pills pt-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <a class="nav-link active" href="/admin" role="tab"
-                   aria-controls="v-pills-home" aria-selected="true">Admin</a>
-                <a class="nav-link" href="/user" role="tab"
-                   aria-controls="v-pills-profile" aria-selected="false">User</a>
-            </div>
+        <div class="col-2 p-0 mt-3">
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item"
+                    th:each="userRole : ${currentUser.getRoles()}"
+                    th:if="${userRole.authority.contains('ROLE_ADMIN')}">
+                    <a aria-current="page" class="nav-link active"
+                       th:href="@{/admin}">
+                        Admin
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link-dark" th:href="@{/user}">
+                        User
+                    </a>
+                </li>
+            </ul>
         </div>
-        <div class="p-0 col-10">
-            <div class="container-fluid bg-light min-vh-100 px-4">
-                <h1 class="pt-3 pb-2">Admin panel</h1>
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <div class="col-md-10 bg-light px-4">
+            <h1 class="mt-2">Admin panel</h1>
+            <div>
+                <ul class="nav nav-tabs ml-0">
                     <li class="nav-item">
                         <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
                            aria-controls="home" aria-selected="true">Users table</a>
@@ -47,11 +59,16 @@
                            aria-controls="profile" aria-selected="false">New User</a>
                     </li>
                 </ul>
+
+
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <div class="card">
-                            <h5 class="card-header">All users</h5>
-                            <div class="card-body">
+                        <div class="border p-3 ml-0 bg-white">
+                            <div class="border p-3 ml-0">
+                                <h5 class="mb-0">All Users</h5>
+                            </div>
+                            <div class="card-body p-0">
+
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
@@ -67,7 +84,6 @@
                                     <tbody id="usersTable">
                                     </tbody>
                                 </table>
-
                                 <div class="modal fade" tabindex="-1" id="editModal"
                                      aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
@@ -191,46 +207,46 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="tab-pane fade" id="newUser" role="tabpanel" aria-labelledby="profile-tab">
-                        <div class="card">
-                            <h5 class="card-header">Add new user</h5>
-                            <div class="card-body">
-                                <form class="offset-md-4 col-sm-4" id="formNewUser">
-                                    <font color="red"><div id="errorAddDiv" style="display: flex; flex-direction: column"></div></font>
-                                    <div class="form-group text-center">
-                                        <label for="name" class="mb-0"><b>Name</b></label>
-                                        <input type="text" class="form-control" id="name"
-                                               placeholder="Name">
-                                        <label for="age" class="mb-0 mt-3"><b>Age</b></label>
-                                        <input th:name="age" th:type="number" class="form-control" id="age"
-                                               placeholder="Age">
-                                        <label for="email" class="mb-0 mt-3"><b>Email</b></label>
-                                        <input type="text" class="form-control" id="email"
-                                               placeholder="email">
-                                        <label for="password" class="mb-0 mt-3"><b>Password</b></label>
-                                        <input type="text" class="form-control" id="password"
-                                               placeholder="Password">
-                                    </div>
-                                    <div class="form-group text-center" style="width: 25vh; margin-left: auto; margin-right: auto;">
-                                        <label for="roleAdd" class="mb-0"><b>Role</b></label>
-                                        <select multiple size="2" class="custom-select" name="roles" id="roleAdd"></select>
-                                    </div>
-                                    <div class="col text-center">
-                                        <input type="submit" class="btn btn-success btn-lg" value="Add new user">
-                                    </div>
-                                </form>
-                            </div>
+                    <div class="card">
+                        <h5 class="card-header">Add new user</h5>
+                        <div class="card-body">
+                            <form class="offset-md-4 col-sm-4" id="formNewUser">
+                                <font color="red"><div id="errorAddDiv" style="display: flex; flex-direction: column"></div></font>
+                                <div class="form-group text-center">
+                                    <label for="name" class="mb-0"><b>Name</b></label>
+                                    <input type="text" class="form-control" id="name"
+                                           placeholder="Name">
+                                    <label for="age" class="mb-0 mt-3"><b>Age</b></label>
+                                    <input th:name="age" th:type="number" class="form-control" id="age"
+                                           placeholder="Age">
+                                    <label for="email" class="mb-0 mt-3"><b>Email</b></label>
+                                    <input type="text" class="form-control" id="email"
+                                           placeholder="email">
+                                    <label for="password" class="mb-0 mt-3"><b>Password</b></label>
+                                    <input type="text" class="form-control" id="password"
+                                           placeholder="Password">
+                                </div>
+                                <div class="form-group text-center" style="width: 25vh; margin-left: auto; margin-right: auto;">
+                                    <label for="roleAdd" class="mb-0"><b>Role</b></label>
+                                    <select multiple size="2" class="custom-select" name="roles" id="roleAdd"></select>
+                                </div>
+                                <div class="col text-center">
+                                    <input type="submit" class="btn btn-success btn-lg" value="Add new user">
+                                </div>
+                            </form>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
         integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
@@ -239,6 +255,7 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
 
+
 <script type="text/javascript" src="/DeleteUser.js"></script>
 <script type="text/javascript" src="/EditUser.js"></script>
 <script type="text/javascript" src="/GetUserId.js"></script>
@@ -246,7 +263,6 @@
 <script type="text/javascript" src="/TableOfAllUsers.js"></script>
 <script type="text/javascript" src="/AddUser.js"></script>
 <script type="text/javascript" src="/ShowUserInfo.js"></script>
-
 
 </body>
 </html>
